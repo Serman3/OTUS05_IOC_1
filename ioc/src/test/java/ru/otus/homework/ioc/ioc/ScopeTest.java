@@ -1,8 +1,6 @@
 package ru.otus.homework.ioc.ioc;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.otus.homework.ioc.command.Command;
 import ru.otus.homework.ioc.ioc.testObject.TestObject;
 import ru.otus.homework.ioc.scopes.InitCommand;
@@ -13,15 +11,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ScopeTest {
 
-    @BeforeAll
-    public static void init() {
+    @BeforeEach
+    public void init() {
         new InitCommand().execute();
         Object iocScope = Ioc.resolve("IoC.Scope.Create", new Object[]{});
         ((Command) Ioc.resolve("IoC.Scope.Current.Set", new Object[]{iocScope})).execute();
     }
 
-    @AfterAll
-    public static void afterAll() {
+    @AfterEach
+    public void afterAll() {
         ((Command) Ioc.resolve("IoC.Scope.Current.Clear", null)).execute();
     }
 

@@ -1,8 +1,6 @@
 package ru.otus.homework.ioc.ioc;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import ru.otus.homework.ioc.command.Command;
 import ru.otus.homework.ioc.ioc.testObject.TestObject;
 import ru.otus.homework.ioc.scopes.InitCommand;
@@ -11,7 +9,6 @@ import java.util.function.Function;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Execution(ExecutionMode.CONCURRENT)
 public class ScopeTest {
 
     @BeforeEach

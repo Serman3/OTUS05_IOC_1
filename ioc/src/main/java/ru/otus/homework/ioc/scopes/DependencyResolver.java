@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 public class DependencyResolver implements IDependencyResolver {
 
-    private Map<String, Function<Object[], Object>> dependencies;
+    private final Map<String, Function<Object[], Object>> dependencies;
 
     public DependencyResolver(Object scope) {
         this.dependencies = (Map<String, Function<Object[], Object>>) scope;

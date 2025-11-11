@@ -12,6 +12,6 @@ public class SetCurrentScopeCommand implements Command {
 
     @Override
     public void execute() {
-        InitCommand.currentScopes.set(scope);
+        InitCommand.CURRENT_SCOPES.set(scope);
     }
 }

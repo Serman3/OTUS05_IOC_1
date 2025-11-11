@@ -11,9 +11,9 @@ public class RegisterDependencyCommand implements Command {
     private final String dependency;
     private final Function<Object[], Object> dependencyResolverStrategy;
 
-    public RegisterDependencyCommand(String dependency, Function<Object[], Object> dependencyResolverStratgey) {
+    public RegisterDependencyCommand(String dependency, Function<Object[], Object> dependencyResolverStrategy) {
         this.dependency = dependency;
-        this.dependencyResolverStrategy = dependencyResolverStratgey;
+        this.dependencyResolverStrategy = dependencyResolverStrategy;
     }
 
     @Override

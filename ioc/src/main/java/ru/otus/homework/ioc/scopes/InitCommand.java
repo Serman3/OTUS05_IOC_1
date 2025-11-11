@@ -12,43 +12,43 @@ import java.util.function.Function;
 
 public class InitCommand implements Command {
 
-    public static final ThreadLocal<Object> currentScopes = new ThreadLocal<>();
+    public static final ThreadLocal<Object> CURRENT_SCOPES = new ThreadLocal<>();
 
-    private static final Map<String, Function<Object[], Object>> rootScope = new ConcurrentHashMap<>();
+    private static final Map<String, Function<Object[], Object>> ROOT_SCOPE = new ConcurrentHashMap<>();
 
-    private static final AtomicBoolean alreadyExecutesSuccessfully = new AtomicBoolean(false);
+    private static final AtomicBoolean ALREADY_EXECUTES_SUCCESSFULLY = new AtomicBoolean(false);
 
     @Override
     public void execute() {
-        if (alreadyExecutesSuccessfully.get()) return;
+        synchronized (ROOT_SCOPE) {
+            if (ALREADY_EXECUTES_SUCCESSFULLY.get()) return;
 
-        synchronized (rootScope) {
-            rootScope.put(
+            ROOT_SCOPE.put(
                     "IoC.Scope.Current.Set",
                     (Object[] args) -> new SetCurrentScopeCommand(args[0])
             );
 
-            rootScope.put(
+            ROOT_SCOPE.put(
                     "IoC.Scope.Current.Clear",
                     (Object[] args) -> new ClearCurrentScopeCommand()
             );
 
-            rootScope.put(
+            ROOT_SCOPE.put(
                     "IoC.Scope.Current",
-                    (Object[] args) -> currentScopes.get() != null ? currentScopes.get() : rootScope
+                    (Object[] args) -> CURRENT_SCOPES.get() != null ? CURRENT_SCOPES.get() : ROOT_SCOPE
             );
 
-            rootScope.put(
+            ROOT_SCOPE.put(
                     "IoC.Scope.Parent",
                     (Object[] args) -> new RuntimeException("The root scope has no a parent scope.")
             );
 
-            rootScope.put(
+            ROOT_SCOPE.put(
                     "IoC.Scope.Create.Empty",
                     (Object[] args) -> new HashMap<String, Function<Object[], Object>>()
             );
 
-            rootScope.put(
+            ROOT_SCOPE.put(
                     "IoC.Scope.Create",
                     (Object[] args) -> {
                         Map<String, Function<Object[], Object>> creatingScope = Ioc.resolve("IoC.Scope.Create.Empty", new Object[]{});
@@ -64,14 +64,14 @@ public class InitCommand implements Command {
                     }
             );
 
-            rootScope.put(
+            ROOT_SCOPE.put(
                     "IoC.Register",
                     (Object[] args) -> new RegisterDependencyCommand((String) args[0], (Function<Object[], Object>) args[1])
             );
 
             Function<BiFunction<String, Object[], Object>, BiFunction<String, Object[], Object>> oldStrategy =
                     (BiFunction<String, Object[], Object> currentStrategy) -> (String dependency, Object[] args) -> {
-                        var scope = currentScopes.get() != null ? currentScopes.get() : rootScope;
+                        var scope = CURRENT_SCOPES.get() != null ? CURRENT_SCOPES.get() : ROOT_SCOPE;
                         var dependencyResolver = new DependencyResolver(scope);
                         return dependencyResolver.resolve(dependency, args);
                     };
@@ -81,7 +81,7 @@ public class InitCommand implements Command {
                     new Object[]{oldStrategy}
             )).execute();
 
-            alreadyExecutesSuccessfully.set(true);
+            ALREADY_EXECUTES_SUCCESSFULLY.set(true);
         }
     }
 }

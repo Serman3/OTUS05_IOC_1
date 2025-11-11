@@ -6,6 +6,6 @@ public class ClearCurrentScopeCommand implements Command {
 
     @Override
     public void execute() {
-        InitCommand.currentScopes.remove();
+        InitCommand.CURRENT_SCOPES.remove();
     }
 }
